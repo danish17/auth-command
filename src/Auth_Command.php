@@ -44,7 +44,7 @@ class Auth_Command extends EE_Command {
 	}
 
 	/**
-	 * Creates http authentication for a site.
+	 * Adds http authentication for a site.
 	 *
 	 * ## OPTIONS
 	 *
@@ -63,31 +63,31 @@ class Auth_Command extends EE_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Add auth on site with default username(easyengine) and random password
-	 *     $ ee auth create example.com
+	 *     $ ee auth add example.com
 	 *
 	 *     # Add auth on all sites with default username and random password
-	 *     $ ee auth create global
+	 *     $ ee auth add global
 	 *
 	 *     # Add auth on site with predefined username and password
-	 *     $ ee auth create example.com --user=test --pass=password
+	 *     $ ee auth add example.com --user=test --pass=password
 	 *
 	 *     # Add auth on site with default username and random password
-	 *     $ ee auth create example.com --pass=password
+	 *     $ ee auth add example.com --pass=password
 	 *
 	 *     # Add auth on admin-tools with username and random password
-	 *     $ ee auth create admin-tools --user=test
+	 *     $ ee auth add admin-tools --user=test
 	 *
 	 *     # Add auth on admin-tools with username and password
-	 *     $ ee auth create admin-tools --user=password
+	 *     $ ee auth addadmin-tools --user=password
 	 * 
 	 *     # Whitelist IP on site
-	 *     $ ee auth create example.com --ip=8.8.8.8,1.1.1.1
+	 *     $ ee auth add example.com --ip=8.8.8.8,1.1.1.1
 	 *
 	 *     # Whitelist IP on all sites
-	 *     $ ee auth create global --ip=8.8.8.8,1.1.1.1
+	 *     $ ee auth add global --ip=8.8.8.8,1.1.1.1
 	 */
-	public function create( $args, $assoc_args ) {
-
+	public function add( $args, $assoc_args ) {
+		
 		verify_htpasswd_is_present();
 
 		$global   = $this->populate_info( $args, __FUNCTION__ );
@@ -99,6 +99,23 @@ class Auth_Command extends EE_Command {
 		} else {
 			$this->create_auth( $assoc_args, $global, $site_url );
 		}
+	}
+
+
+	/**
+	 * @deprecated
+	 * 
+	 * Create auth for a site.
+	 * 
+	 * Replaced with `ee auth add <site-name>`.
+	 */
+	public function create( $args, $assoc_args ) {
+		/**
+		 * @todo
+		 * Add a nice deprecation message.
+		 */
+		EE::warning( '`ee auth create` will be deprecated and replaced with `ee auth add`');
+		$this->add( $args, $assoc_args );
 	}
 
 	/**
@@ -569,7 +586,7 @@ class Auth_Command extends EE_Command {
 	}
 
 	/**
-	 * Deletes http authentication for a site.
+	 * Remove http authentication from a site.
 	 *
 	 * Default: removes http authentication from site. If `--user` is passed it removes that specific user.
 	 *
@@ -590,30 +607,30 @@ class Auth_Command extends EE_Command {
 	 * ## EXAMPLES
 	 *
 	 *     # Remove auth on site and its admin tools with default username(easyengine)
-	 *     $ ee auth delete example.com
+	 *     $ ee auth remove example.com
 	 *
 	 *     # Remove auth on site and its admin tools with custom username
-	 *     $ ee auth delete example.com --user=example
+	 *     $ ee auth remove example.com --user=example
 	 *
 	 *     # Remove global auth on all sites (but not admin tools) with default username(easyengine)
-	 *     $ ee auth delete global
+	 *     $ ee auth remove global
 	 * 
 	 *     # Remove auth on `admin-tools` with custom username
-	 *     $ ee auth delete admin-tools --user=test
+	 *     $ ee auth remove admin-tools --user=test
 	 *
 	 * 	   # Remove auth on `admin-tools` with custom username without asking for confirmation
-	 *     $ ee auth delete admin-tools --user=test --yes
+	 *     $ ee auth remove admin-tools --user=test --yes
 	 * 
 	 *     # Remove specific whitelisted IPs on site
-	 *     $ ee auth delete example.com --ip=1.1.1.1,8.8.8.8
+	 *     $ ee auth remove example.com --ip=1.1.1.1,8.8.8.8
 	 *
 	 *     # Remove all whitelisted IPs on site
-	 *     $ ee auth delete example.com --ip
+	 *     $ ee auth remove example.com --ip
 	 *
 	 *     # Remove whitelisted IPs on all sites
-	 *     $ ee auth delete global --ip=1.1.1.1
+	 *     $ ee auth remove global --ip=1.1.1.1
 	 */
-	public function delete( $args, $assoc_args ) {
+	public function remove( $args, $assoc_args ) {
 		verify_htpasswd_is_present();
 
 		$global   = $this->populate_info( $args, __FUNCTION__ );
@@ -693,6 +710,22 @@ class Auth_Command extends EE_Command {
 
 			reload_global_nginx_proxy();
 		}
+	}
+
+	/**
+	 * @deprecated
+	 * 
+	 * Delete auth from a site.
+	 * 
+	 * Replaced with `ee auth remove <site-name>`.
+	 */
+	public function delete( $args, $assoc_args ) {
+		/**
+		 * @todo
+		 * Add a nice deprecation notice.
+		 */
+		EE::warning( '`ee auth delete` will be deprecated and replaced with `ee auth remove`');
+		$this->remove( $args, $assoc_args );
 	}
 
 	/**
