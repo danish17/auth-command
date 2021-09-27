@@ -16,7 +16,6 @@
 
 use EE\Model\Auth;
 use EE\Model\Whitelist;
-use EE\Model\Site;
 use Symfony\Component\Filesystem\Filesystem;
 use function EE\Auth\Utils\verify_htpasswd_is_present;
 use function EE\Site\Utils\auto_site_name;
@@ -85,9 +84,11 @@ class Auth_Command extends EE_Command {
 	 *
 	 *     # Whitelist IP on all sites
 	 *     $ ee auth add global --ip=8.8.8.8,1.1.1.1
+	 * 
+	 * @alias create
+	 * 
 	 */
 	public function add( $args, $assoc_args ) {
-		
 		verify_htpasswd_is_present();
 
 		$global   = $this->populate_info( $args, __FUNCTION__ );
@@ -99,23 +100,6 @@ class Auth_Command extends EE_Command {
 		} else {
 			$this->create_auth( $assoc_args, $global, $site_url );
 		}
-	}
-
-
-	/**
-	 * @deprecated
-	 * 
-	 * Create auth for a site.
-	 * 
-	 * Replaced with `ee auth add <site-name>`.
-	 */
-	public function create( $args, $assoc_args ) {
-		/**
-		 * @todo
-		 * Add a nice deprecation message.
-		 */
-		EE::warning( '`ee auth create` will be deprecated and replaced with `ee auth add`');
-		$this->add( $args, $assoc_args );
 	}
 
 	/**
@@ -629,6 +613,8 @@ class Auth_Command extends EE_Command {
 	 *
 	 *     # Remove whitelisted IPs on all sites
 	 *     $ ee auth remove global --ip=1.1.1.1
+	 * 
+	 * @alias delete
 	 */
 	public function remove( $args, $assoc_args ) {
 		verify_htpasswd_is_present();
@@ -710,22 +696,6 @@ class Auth_Command extends EE_Command {
 
 			reload_global_nginx_proxy();
 		}
-	}
-
-	/**
-	 * @deprecated
-	 * 
-	 * Delete auth from a site.
-	 * 
-	 * Replaced with `ee auth remove <site-name>`.
-	 */
-	public function delete( $args, $assoc_args ) {
-		/**
-		 * @todo
-		 * Add a nice deprecation notice.
-		 */
-		EE::warning( '`ee auth delete` will be deprecated and replaced with `ee auth remove`');
-		$this->remove( $args, $assoc_args );
 	}
 
 	/**
